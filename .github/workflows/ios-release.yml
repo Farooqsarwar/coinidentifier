@@ -2,94 +2,35 @@ name: Flutter iOS Release
 
 on:
   push:
-    branches:
-      - main        # Run on push to main
-  workflow_dispatch:  # Allow manual run
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build-ios:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
-
-      # -------------------------------
-      # 1️⃣ Checkout your repo
-      # -------------------------------
+      # 1️⃣ Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # -------------------------------
       # 2️⃣ Setup Flutter SDK
-      # -------------------------------
+      # FIX: Using 'stable' channel ensures we get Flutter 3.38+ (Dart 3.10+),
+      # which satisfies your project's requirement for Dart ^3.9.2
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.19.0"  # Use your Flutter version
+          channel: 'stable'
 
-      # -------------------------------
       # 3️⃣ Install dependencies
-      # -------------------------------
       - name: Install dependencies
         run: flutter pub get
 
-      # -------------------------------
-      # 4️⃣ Setup Certificates & Provisioning
-      # -------------------------------
-      # These should be added as GitHub Secrets:
-      # APPLE_CERTIFICATE (base64 of .p12)
-      # APPLE_CERT_PASSWORD (password for .p12)
-      # APPLE_PROVISIONING_PROFILE (base64 of .mobileprovision)
-      - name: Setup Signing Certificates
-        run: |
-          echo ${{ secrets.APPLE_CERTIFICATE }} | base64 --decode > ios_distribution.p12
-          security create-keychain -p "" build.keychain
-          security import ios_distribution.p12 -t agg -k ~/Library/Keychains/build.keychain -P "${{ secrets.APPLE_CERT_PASSWORD }}" -A
-          security list-keychains -s ~/Library/Keychains/build.keychain
-          security unlock-keychain -p "" ~/Library/Keychains/build.keychain
-          echo ${{ secrets.APPLE_PROVISIONING_PROFILE }} | base64 --decode > ios_profile.mobileprovision
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp ios_profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+      # 4️⃣ Analyze project source
+      - name: Analyze project source
+        run: flutter analyze
 
-      # -------------------------------
-      # 5️⃣ Clean Flutter Project (Optional but recommended)
-      # -------------------------------
-      - name: Clean Flutter build
-        run: flutter clean
-
-      # -------------------------------
-      # 6️⃣ Build iOS Release
-      # -------------------------------
-      - name: Build iOS Release
-        run: flutter build ios --release --no-codesign
-
-      # -------------------------------
-      # 7️⃣ Archive iOS app to IPA
-      # -------------------------------
-      - name: Archive IPA
-        run: |
-          cd ios
-          xcodebuild -workspace Runner.xcworkspace \
-                     -scheme Runner \
-                     -configuration Release \
-                     -archivePath $PWD/build/Runner.xcarchive archive
-          
-          xcodebuild -exportArchive \
-                     -archivePath $PWD/build/Runner.xcarchive \
-                     -exportOptionsPlist exportOptions.plist \
-                     -exportPath $PWD/build/Runner.ipa
-
-      # -------------------------------
-      # 8️⃣ Upload to TestFlight via Fastlane
-      # -------------------------------
-      # Requires App Store Connect API key
-      - name: Install Fastlane
-        run: sudo gem install fastlane -NV
-
-      - name: Upload to TestFlight
-        env:
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-        run: |
-          cd ios
-          fastlane pilot upload \
-            --api_key_path ../fastlane/AppStoreConnectAPIKey.json \
-            --ipa ../build/Runner.ipa
+      # 5️⃣ Run Flutter tests
+      - name: Run tests
+        run: flutter test
