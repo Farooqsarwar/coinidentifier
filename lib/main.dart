@@ -347,11 +347,13 @@ Future<void> main() async {
   prefs.setDouble('metal_platinum', prefs.getDouble('metal_platinum') ?? 1100.0);
   prefs.setString('displayName', prefs.getString('displayName') ?? 'Collector');
 
-  await RevenueCatService().initialize();
-
+  // FIX: Run the app UI first!
   runApp(const CoiniumApp());
-}
 
+  // FIX: Initialize RevenueCat *after* the UI is ready.
+  // We removed 'await' so it doesn't block the app from starting.
+  RevenueCatService().initialize();
+}
 class CoiniumApp extends StatelessWidget {
   const CoiniumApp({super.key});
 
