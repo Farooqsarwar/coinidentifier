@@ -1,6 +1,3 @@
-// lib/main.dart
-// Coinium – Complete app with RevenueCat integration for iOS and Android
-// FIXED: Name collisions, Purchase types, and Entitlement handling
 
 import 'dart:async';
 import 'dart:convert';
@@ -371,7 +368,6 @@ class CoiniumApp extends StatelessWidget {
         colorScheme: const ColorScheme.dark(
           primary: Color(0xFF13EC5B),
           secondary: Color(0xFF92C9A4),
-          background: Color(0xFF102216),
           surface: Color(0xFF193322),
         ),
         appBarTheme: const AppBarTheme(
@@ -594,11 +590,11 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   begin: Alignment(-1 + shimmerCtrl.value * 2, -1),
                   end: Alignment(1 + shimmerCtrl.value * 2, 1),
                   colors: [
-                    SplashScreen.primaryGreen.withOpacity(0.03),
+                    SplashScreen.primaryGreen.withValues(alpha: 0.03),
                     Colors.transparent,
-                    SplashScreen.primaryGreen.withOpacity(0.05),
+                    SplashScreen.primaryGreen.withValues(alpha: 0.05),
                     Colors.transparent,
-                    SplashScreen.lightGreen.withOpacity(0.03),
+                    SplashScreen.lightGreen.withValues(alpha: 0.03),
                   ],
                 ),
               ),
@@ -609,7 +605,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               gradient: RadialGradient(
                 center: Alignment.center,
                 radius: 1.2,
-                colors: [Colors.black.withOpacity(0.3), Colors.black.withOpacity(0.7)],
+                colors: [Colors.black.withValues(alpha: 0.3), Colors.black.withValues(alpha: 0.7)],
               ),
             ),
           ),
@@ -638,8 +634,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                             colors: [SplashScreen.primaryGreen, Color(0xFF0FD850)],
                           ),
                           boxShadow: [
-                            BoxShadow(color: SplashScreen.primaryGreen.withOpacity(0.6), blurRadius: 40, spreadRadius: 10),
-                            BoxShadow(color: SplashScreen.primaryGreen.withOpacity(0.3), blurRadius: 80, spreadRadius: 20),
+                            BoxShadow(color: SplashScreen.primaryGreen.withValues(alpha: 0.6), blurRadius: 40, spreadRadius: 10),
+                            BoxShadow(color: SplashScreen.primaryGreen.withValues(alpha: 0.3), blurRadius: 80, spreadRadius: 20),
                           ],
                         ),
                         child: const Icon(Icons.toll, color: Color(0xFF102216), size: 60),
@@ -688,7 +684,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   Text(
                     '${(progress.value * 100).toInt()}%',
                     style: TextStyle(
-                      color: SplashScreen.lightGreen.withOpacity(0.9),
+                      color: SplashScreen.lightGreen.withValues(alpha: 0.9),
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -699,8 +695,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     height: 6,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: SplashScreen.darkSurface.withOpacity(0.5),
-                      border: Border.all(color: SplashScreen.primaryGreen.withOpacity(0.2)),
+                      color: SplashScreen.darkSurface.withValues(alpha: 0.5),
+                      border: Border.all(color: SplashScreen.primaryGreen.withValues(alpha: 0.2)),
                     ),
                     child: Stack(
                       children: [
@@ -710,7 +706,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               gradient: const LinearGradient(colors: [SplashScreen.primaryGreen, Color(0xFF0FD850)]),
-                              boxShadow: [BoxShadow(color: SplashScreen.primaryGreen.withOpacity(0.5), blurRadius: 15, spreadRadius: 2)],
+                              boxShadow: [BoxShadow(color: SplashScreen.primaryGreen.withValues(alpha: 0.5), blurRadius: 15, spreadRadius: 2)],
                             ),
                           ),
                         ),
@@ -735,9 +731,9 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: SplashScreen.primaryGreen.withOpacity(0.1),
+                        color: SplashScreen.primaryGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: SplashScreen.primaryGreen.withOpacity(0.3)),
+                        border: Border.all(color: SplashScreen.primaryGreen.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -747,7 +743,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                           Text(
                             'Powered by Gemini AI',
                             style: TextStyle(
-                              color: SplashScreen.lightGreen.withOpacity(0.9),
+                              color: SplashScreen.lightGreen.withValues(alpha: 0.9),
                               fontSize: 11,
                               letterSpacing: 1.2,
                               fontWeight: FontWeight.w500,
@@ -778,7 +774,7 @@ class _CirclesPainter extends CustomPainter {
       ..strokeWidth = 2;
 
     for (int i = 1; i <= 3; i++) {
-      paint.color = SplashScreen.primaryGreen.withOpacity(0.1 * (4 - i) * progress);
+      paint.color = SplashScreen.primaryGreen.withValues(alpha: 0.1 * (4 - i) * progress);
       canvas.drawCircle(Offset(size.width / 2, size.height / 2), (100 + i * 80) * progress, paint);
     }
   }
@@ -802,7 +798,7 @@ class _ParticlePainter extends CustomPainter {
     for (var p in particles) {
       final y = (p.y - time * p.speed) % 1;
       final paint = Paint()
-        ..color = SplashScreen.primaryGreen.withOpacity(p.opacity * (1 - y * 0.5))
+        ..color = SplashScreen.primaryGreen.withValues(alpha: p.opacity * (1 - y * 0.5))
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
       canvas.drawCircle(Offset(p.x * size.width, y * size.height), p.size, paint);
     }
@@ -901,7 +897,7 @@ class _BlinkingCursorState extends State<_BlinkingCursor> with SingleTickerProvi
           decoration: BoxDecoration(
             color: SplashScreen.primaryGreen,
             borderRadius: BorderRadius.circular(1),
-            boxShadow: [BoxShadow(color: SplashScreen.primaryGreen.withOpacity(0.6), blurRadius: 6)],
+            boxShadow: [BoxShadow(color: SplashScreen.primaryGreen.withValues(alpha: 0.6), blurRadius: 6)],
           ),
         ),
       ),
@@ -1036,7 +1032,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   gradient: const LinearGradient(colors: [Color(0xFF13EC5B), Color(0xFF0FD850)]),
                   shape: BoxShape.circle,
                   boxShadow: [
-                    BoxShadow(color: const Color(0xFF13EC5B).withOpacity(0.4), blurRadius: 30, spreadRadius: 10),
+                    BoxShadow(color: const Color(0xFF13EC5B).withValues(alpha: 0.4), blurRadius: 30, spreadRadius: 10),
                   ],
                 ),
                 child: const Icon(Icons.workspace_premium, size: 50, color: Color(0xFF102216)),
@@ -1060,9 +1056,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
@@ -1117,7 +1113,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       foregroundColor: const Color(0xFF102216),
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                      disabledBackgroundColor: const Color(0xFF13EC5B).withOpacity(0.5),
+                      disabledBackgroundColor: const Color(0xFF13EC5B).withValues(alpha: 0.5),
                     ),
                     child: _isLoading
                         ? const SizedBox(
@@ -1186,9 +1182,9 @@ We do not:
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1225,7 +1221,7 @@ We do not:
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF13EC5B).withOpacity(0.15),
+                  color: const Color(0xFF13EC5B).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(feature.$2, color: const Color(0xFF13EC5B), size: 20),
@@ -1265,10 +1261,10 @@ We do not:
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF13EC5B).withOpacity(0.1) : const Color(0xFF193322),
+          color: isSelected ? const Color(0xFF13EC5B).withValues(alpha: 0.1) : const Color(0xFF193322),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFF13EC5B) : const Color(0xFF326744).withOpacity(0.3),
+            color: isSelected ? const Color(0xFF13EC5B) : const Color(0xFF326744).withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1425,7 +1421,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: BottomAppBar(
-            color: const Color(0xFF193322).withOpacity(0.8),
+            color: const Color(0xFF193322).withValues(alpha: 0.8),
             elevation: 0,
             shape: const CircularNotchedRectangle(),
             notchMargin: 8,
@@ -1468,7 +1464,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           shape: BoxShape.circle,
           gradient: const LinearGradient(colors: [Color(0xFF13EC5B), Color(0xFF0FD850)]),
           boxShadow: [
-            BoxShadow(color: const Color(0xFF13EC5B).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
+            BoxShadow(color: const Color(0xFF13EC5B).withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10)),
           ],
         ),
         child: FloatingActionButton(
@@ -1669,7 +1665,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFF193322),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.7)),
+          border: Border.all(color: color.withValues(alpha: 0.7)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -1702,7 +1698,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF13EC5B).withOpacity(0.35),
+                color: const Color(0xFF13EC5B).withValues(alpha: 0.35),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -1714,7 +1710,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF102216).withOpacity(0.95),
+                  color: const Color(0xFF102216).withValues(alpha: 0.95),
                 ),
                 child: const Icon(Icons.workspace_premium, color: Color(0xFF13EC5B), size: 30),
               ),
@@ -1752,7 +1748,7 @@ class _HomeScreenState extends State<HomeScreen> {
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: const Color(0xFF13EC5B).withOpacity(0.5)),
+          border: Border.all(color: const Color(0xFF13EC5B).withValues(alpha: 0.5)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1763,7 +1759,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF13EC5B).withOpacity(0.18),
+                    color: const Color(0xFF13EC5B).withValues(alpha: 0.18),
                   ),
                   child: const Icon(Icons.lock_open, color: Color(0xFF13EC5B), size: 26),
                 ),
@@ -1797,7 +1793,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: Colors.white.withOpacity(0.08),
+                      backgroundColor: Colors.white.withValues(alpha: 0.08),
                       valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF13EC5B)),
                     ),
                   ),
@@ -1841,7 +1837,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFF193322),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF326744).withOpacity(0.3)),
+          border: Border.all(color: const Color(0xFF326744).withValues(alpha: 0.3)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1850,7 +1846,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: accentColor.withOpacity(0.15),
+                color: accentColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: accentColor, size: 24),
@@ -2005,7 +2001,7 @@ class _CameraScanScreenState extends State<CameraScanScreen> with SingleTickerPr
             Positioned.fill(child: CameraPreview(_cameraController!))
           else
             const Center(child: CircularProgressIndicator(color: Color(0xFF13EC5B))),
-          Positioned.fill(child: Container(color: Colors.black.withOpacity(0.3))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.3))),
           SafeArea(
             child: Column(
               children: [
@@ -2043,7 +2039,7 @@ class _CameraScanScreenState extends State<CameraScanScreen> with SingleTickerPr
                             decoration: BoxDecoration(
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF13EC5B).withOpacity(0.3 * _pulseController.value),
+                                  color: const Color(0xFF13EC5B).withValues(alpha: 0.3 * _pulseController.value),
                                   blurRadius: 40,
                                   spreadRadius: 10,
                                 ),
@@ -2063,7 +2059,7 @@ class _CameraScanScreenState extends State<CameraScanScreen> with SingleTickerPr
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Text(
@@ -2120,7 +2116,7 @@ class _CameraScanScreenState extends State<CameraScanScreen> with SingleTickerPr
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.35),
+        color: Colors.black.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(30),
       ),
       child: SingleChildScrollView(
@@ -2160,7 +2156,7 @@ class _CameraScanScreenState extends State<CameraScanScreen> with SingleTickerPr
         selectedColor: const Color(0xFF13EC5B),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: selected ? const Color(0xFF13EC5B) : Colors.white.withOpacity(0.3)),
+          side: BorderSide(color: selected ? const Color(0xFF13EC5B) : Colors.white.withValues(alpha: 0.3)),
         ),
       ),
     );
@@ -2168,14 +2164,14 @@ class _CameraScanScreenState extends State<CameraScanScreen> with SingleTickerPr
 
   Widget _buildTopButton(IconData icon, VoidCallback onPressed) {
     return Container(
-      decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), shape: BoxShape.circle),
+      decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.4), shape: BoxShape.circle),
       child: IconButton(onPressed: onPressed, icon: Icon(icon, color: Colors.white), iconSize: 22),
     );
   }
 
   Widget _buildBottomButton(IconData icon, VoidCallback onPressed) {
     return Container(
-      decoration: BoxDecoration(color: Colors.black.withOpacity(0.15), shape: BoxShape.circle),
+      decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.15), shape: BoxShape.circle),
       child: IconButton(onPressed: onPressed, icon: Icon(icon), iconSize: 28, color: const Color(0xFF102216)),
     );
   }
@@ -2343,7 +2339,7 @@ class _AnalyzingCoinScreenState extends State<AnalyzingCoinScreen> with SingleTi
         backgroundColor: bgDark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: gold.withOpacity(0.3)),
+          side: BorderSide(color: gold.withValues(alpha: 0.3)),
         ),
         title: const Row(
           children: [
@@ -2403,7 +2399,7 @@ class _AnalyzingCoinScreenState extends State<AnalyzingCoinScreen> with SingleTi
               margin: const EdgeInsets.symmetric(horizontal: 4),
               width: 10,
               height: 10,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: gold.withOpacity(opacity)),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: gold.withValues(alpha: opacity)),
             );
           }),
         );
@@ -2425,7 +2421,7 @@ class _AnalyzingCoinScreenState extends State<AnalyzingCoinScreen> with SingleTi
                   Container(
                     width: 44,
                     height: 44,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: gold.withOpacity(0.1)),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: gold.withValues(alpha: 0.1)),
                     child: IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.close_rounded, color: Colors.white, size: 22),
@@ -2454,8 +2450,8 @@ class _AnalyzingCoinScreenState extends State<AnalyzingCoinScreen> with SingleTi
                         height: 200,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: gold.withOpacity(0.3), width: 2),
-                          boxShadow: [BoxShadow(color: gold.withOpacity(0.2), blurRadius: 20, spreadRadius: 5)],
+                          border: Border.all(color: gold.withValues(alpha: 0.3), width: 2),
+                          boxShadow: [BoxShadow(color: gold.withValues(alpha: 0.2), blurRadius: 20, spreadRadius: 5)],
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(18),
@@ -2481,7 +2477,7 @@ class _AnalyzingCoinScreenState extends State<AnalyzingCoinScreen> with SingleTi
                                   height: 80,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: gold.withOpacity(0.2), width: 4),
+                                    border: Border.all(color: gold.withValues(alpha: 0.2), width: 4),
                                   ),
                                   child: CustomPaint(painter: _ArcPainter(color: gold)),
                                 ),
@@ -2604,7 +2600,7 @@ class _ResultScreenState extends State<ResultScreen> {
             backgroundColor: const Color(0xFF102216),
             leading: Container(
               margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.black.withOpacity(0.3), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3), shape: BoxShape.circle),
               child: IconButton(
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -2614,7 +2610,7 @@ class _ResultScreenState extends State<ResultScreen> {
             actions: [
               Container(
                 margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.3), shape: BoxShape.circle),
+                decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3), shape: BoxShape.circle),
                 child: IconButton(
                   onPressed: () => setState(() => _isFavorite = !_isFavorite),
                   icon: Icon(
@@ -2635,7 +2631,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                        colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
                       ),
                     ),
                   ),
@@ -2676,8 +2672,8 @@ class _ResultScreenState extends State<ResultScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF102216).withOpacity(0.0),
-              const Color(0xFF102216).withOpacity(0.95),
+              const Color(0xFF102216).withValues(alpha: 0.0),
+              const Color(0xFF102216).withValues(alpha: 0.95),
               const Color(0xFF102216),
             ],
           ),
@@ -2814,7 +2810,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF13EC5B).withOpacity(0.1),
+                  color: const Color(0xFF13EC5B).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Icons.toll, size: 32, color: Color(0xFF13EC5B)),
@@ -2885,7 +2881,7 @@ class _EmptyCollection extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [const Color(0xFF13EC5B).withOpacity(0.2), const Color(0xFF23482F)],
+                  colors: [const Color(0xFF13EC5B).withValues(alpha: 0.2), const Color(0xFF23482F)],
                 ),
                 borderRadius: BorderRadius.circular(24),
               ),
@@ -3024,7 +3020,7 @@ class _SectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF193322),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF326744).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFF326744).withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -3202,10 +3198,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isPremium ? const Color(0xFF13EC5B).withOpacity(0.1) : const Color(0xFF23482F),
+                    color: isPremium ? const Color(0xFF13EC5B).withValues(alpha: 0.1) : const Color(0xFF23482F),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isPremium ? const Color(0xFF13EC5B) : const Color(0xFF326744).withOpacity(0.3),
+                      color: isPremium ? const Color(0xFF13EC5B) : const Color(0xFF326744).withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -3421,7 +3417,7 @@ For questions, contact support@coinium.app
                 const SizedBox(height: 4),
                 Text(
                   'Version 1.0.0',
-                  style: TextStyle(color: const Color(0xFF92C9A4).withOpacity(0.6), fontSize: 12),
+                  style: TextStyle(color: const Color(0xFF92C9A4).withValues(alpha: 0.6), fontSize: 12),
                 ),
               ],
             ),
@@ -3498,7 +3494,7 @@ class _HelpItem extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: const Color(0xFF13EC5B).withOpacity(0.1),
+          color: const Color(0xFF13EC5B).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: const Color(0xFF13EC5B), size: 20),
