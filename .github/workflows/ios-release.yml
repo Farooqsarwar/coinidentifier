@@ -7,30 +7,24 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-ios:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Flutter SDK
-      # FIX: Using 'stable' channel ensures we get Flutter 3.38+ (Dart 3.10+),
-      # which satisfies your project's requirement for Dart ^3.9.2
+      # THIS is the critical fix: 'stable' gives you Flutter 3.38+ / Dart 3.10+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      # 4️⃣ Analyze project source
       - name: Analyze project source
         run: flutter analyze
 
-      # 5️⃣ Run Flutter tests
       - name: Run tests
         run: flutter test
