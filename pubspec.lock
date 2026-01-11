@@ -448,6 +448,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.10.3"
+  responsiveness:
+    dependency: "direct main"
+    description:
+      name: responsiveness
+      sha256: "7ac88b88427accadff6c8b5e87e33ce570f225999dac0633b804f9bdf289eb7b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.8"
   shared_preferences:
     dependency: "direct main"
     description:

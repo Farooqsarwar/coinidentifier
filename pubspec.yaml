@@ -40,6 +40,7 @@ dependencies:
   camera: ^0.11.3
   shared_preferences: ^2.5.4
   purchases_flutter: ^9.10.3
+  responsiveness: ^1.2.8
 
 dev_dependencies:
   flutter_test:
