@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "272932567784",
+    "project_id": "coinid-5e503",
+    "storage_bucket": "coinid-5e503.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272932567784:android:fb12ddc2130bef1381a75d",
+        "android_client_info": {
+          "package_name": "com.coinidentifier.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAaQQBkc9cCQv0sF0dYQxGBmW8qDgpBf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
