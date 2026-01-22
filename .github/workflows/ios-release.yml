@@ -1,74 +1,43 @@
-name: Flutter iOS IPA Build
+name: Flutter iOS Release
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build-ios:
-    name: Build iOS IPA
-    runs-on: macos-13
-
-    env:
-      FLUTTER_VERSION: "3.38.6"
-      BUILD_NAME: "1.0.${{ github.run_number }}"
-      BUILD_NUMBER: "${{ github.run_number }}"
+  build:
+    runs-on: macos-latest
 
     steps:
-      # 1️⃣ Checkout code
+      # 1. Checkout the code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 2️⃣ Set up Flutter
+      # 2. Install Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
 
-      # 3️⃣ Enable iOS
-      - name: Enable iOS
-        run: flutter config --enable-ios
-
-      # 4️⃣ Flutter pub get
+      # 3. Get dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      # 5️⃣ Install CocoaPods
-      - name: Install CocoaPods
-        run: sudo gem install cocoapods
+      # 4. Build the unsigned app
+      - name: Build iOS Release
+        run: flutter build ios --release --no-codesign
 
-      # 6️⃣ Pod install
-      - name: Pod install
+      # 5. CONVERT .APP TO .IPA (This is the step you were missing)
+      - name: Create IPA
         run: |
-          cd ios
-          pod install
-          cd ..
+          mkdir Payload
+          mv build/ios/iphoneos/Runner.app Payload
+          zip -r coinidentifier.ipa Payload
 
-      # 7️⃣ Update version and build numbers
-      - name: Update Flutter build version
-        run: flutter pub version ${{ env.BUILD_NAME }}+${{ env.BUILD_NUMBER }}
-
-      # 8️⃣ Build IPA (archive)
-      - name: Build iOS IPA
-        run: |
-          flutter build ipa \
-            --release \
-            --export-method app-store \
-            --build-name=${{ env.BUILD_NAME }} \
-            --build-number=${{ env.BUILD_NUMBER }}
-
-      # 9️⃣ Upload IPA as artifact
+      # 6. UPLOAD THE FILE (So you can download it from GitHub)
       - name: Upload IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Runner.ipa
-          path: build/ios/ipa/*.ipa
-
-      # 🔟 Optional: Upload xcarchive if needed
-      - name: Upload Xcode archive
-        uses: actions/upload-artifact@v3
-        with:
-          name: Runner.xcarchive
-          path: build/ios/archive/*.xcarchive
+          name: coinidentifier-ipa
+          path: coinidentifier.ipa
