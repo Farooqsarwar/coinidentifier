@@ -23,25 +23,16 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen> {
   bool _isFavorite = false;
 
-  // Theme Constants
+  // --- THEME CONSTANTS (Your Original Colors) ---
   static const Color bgColor = Color(0xFF102216);
-  static const Color cardColor = Color(0xFF23482F);
+  static const Color cardColor = Color(0xFF1C3A27); // Slightly lighter for cards
   static const Color textColor = Color(0xFF92C9A4);
-  static const Color highlightColor = Color(0xFF13EC5B);
+  static const Color highlightColor = Color(0xFF13EC5B); // Your Gold/Neon Green
 
-  String get _title {
-    switch (widget.type.toLowerCase()) {
-      case 'coin':
-        return 'Coin Details';
-      case 'banknote':
-        return 'Banknote Details';
-      case 'medal':
-        return 'Medal Details';
-      case 'token':
-        return 'Token / Artifact';
-      default:
-        return 'Item Details';
-    }
+  @override
+  void initState() {
+    super.initState();
+    // Check if already favorites (optional implementation)
   }
 
   Future<void> _saveToCollection() async {
@@ -60,26 +51,85 @@ class _ResultScreenState extends State<ResultScreen> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.black, size: 20),
-            SizedBox(width: 12),
-            Text('Saved to My Collection!', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ],
+        content: const Text(
+          'Saved to Collection',
+          style: TextStyle(color: bgColor, fontWeight: FontWeight.bold),
         ),
         backgroundColor: highlightColor,
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.only(bottom: 120, left: 16, right: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
 
-  // --- MANUAL TEXT PARSING LOGIC (No Packages) ---
+  // --- WIDGETS FOR NEW DESIGN ---
 
+  Widget _buildStatItem(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            color: textColor.withOpacity(0.7),
+            fontSize: 12,
+            letterSpacing: 1.0,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0, top: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Icon(Icons.more_horiz, color: textColor),
+        ],
+      ),
+    );
+  }
+
+  // Parses your AI text and wraps it in the new Card style
+  Widget _buildAnalysisCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildFormattedContent(widget.analysis),
+        ],
+      ),
+    );
+  }
+
+  // --- TEXT PARSING LOGIC ---
   Widget _buildFormattedContent(String rawText) {
     List<Widget> children = [];
     List<String> lines = rawText.split('\n');
@@ -91,31 +141,45 @@ class _ResultScreenState extends State<ResultScreen> {
         continue;
       }
 
+      // Check for Headers (##)
       if (line.startsWith('##')) {
         children.add(
           Padding(
             padding: const EdgeInsets.only(top: 16, bottom: 8),
             child: Text(
               line.replaceAll('#', '').trim(),
-              style: const TextStyle(color: highlightColor, fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white, // White headers like screenshots
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         );
-      } else if (line.startsWith('- ') || line.startsWith('* ')) {
+      }
+      // Check for Bullet points
+      else if (line.startsWith('- ') || line.startsWith('* ')) {
         children.add(
           Padding(
-            padding: const EdgeInsets.only(bottom: 4),
+            padding: const EdgeInsets.only(bottom: 6),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('• ', style: TextStyle(color: highlightColor, fontSize: 16, height: 1.5)),
+                const Text('• ', style: TextStyle(color: highlightColor, fontSize: 16)),
                 Expanded(child: _buildRichTextLine(line.substring(2))),
               ],
             ),
           ),
         );
-      } else {
-        children.add(Padding(padding: const EdgeInsets.only(bottom: 4), child: _buildRichTextLine(line)));
+      }
+      // Standard text
+      else {
+        children.add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: _buildRichTextLine(line),
+          ),
+        );
       }
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: children);
@@ -127,6 +191,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
     for (int i = 0; i < parts.length; i++) {
       if (i % 2 == 0) {
+        // Normal text
         if (parts[i].isNotEmpty) {
           spans.add(TextSpan(
             text: parts[i],
@@ -134,10 +199,16 @@ class _ResultScreenState extends State<ResultScreen> {
           ));
         }
       } else {
+        // Bold text (Highlighted)
         if (parts[i].isNotEmpty) {
           spans.add(TextSpan(
             text: parts[i],
-            style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700, height: 1.5),
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                height: 1.5
+            ),
           ));
         }
       }
@@ -149,104 +220,172 @@ class _ResultScreenState extends State<ResultScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      // 1. SIMPLE APP BAR
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-        ),
-        title: Text(
-          _title,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      // 2. STACK FOR FLOATING BUTTON
       body: Stack(
         children: [
-          // Scrollable Content
+          // 1. SCROLLABLE CONTENT
           SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(bottom: 100), // Space for button
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Image displayed in the body
-                Container(
-                  width: double.infinity,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                      image: FileImage(widget.imageFile),
-                      fit: BoxFit.cover,
+                const SizedBox(height: 60), // SafeArea top spacing
+
+                // --- TOP NAVIGATION ---
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "${widget.type[0].toUpperCase()}${widget.type.substring(1)} Details",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {}, // Optional: Menu action
+                        icon: const Icon(Icons.more_horiz, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // --- MAIN IMAGE WITH GLOW (Like Image 1/6) ---
+                Center(
+                  child: Container(
+                    height: 260,
+                    width: 260,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: highlightColor.withOpacity(0.15),
+                          blurRadius: 40,
+                          spreadRadius: 0,
+                        ),
+                      ],
                     ),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    child: ClipOval(
+                      child: Image.file(
+                        widget.imageFile,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 30),
 
-                // Analysis Result Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.05)),
+                // --- CONTENT CONTAINER ---
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // --- STATS ROW (Like Image 4/6) ---
+                      // Note: Since we don't have exact parsed JSON, we use static labels
+                      // referencing that the analysis text below contains the data.
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Colors.white.withOpacity(0.1)),
+                            bottom: BorderSide(color: Colors.white.withOpacity(0.1)),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildStatItem("Type", widget.type.toUpperCase()),
+                            Container(width: 1, height: 30, color: Colors.white24),
+                            _buildStatItem("Status", "IDENTIFIED"),
+                            Container(width: 1, height: 30, color: Colors.white24),
+                            _buildStatItem("Origin", "AI SCAN"),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // --- ANALYSIS CARD (Like Image 1) ---
+                      _buildSectionHeader("Analysis Report"),
+                      _buildAnalysisCard(),
+
+                      const SizedBox(height: 20),
+
+                      // --- PLACEHOLDER FOR VALUE (Like Image 5) ---
+                      // Since AI output is text, we guide user to read it
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2C2F20), // Darker goldish tint
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: highlightColor.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.monetization_on_outlined, color: highlightColor),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                "Check the description above for estimated value and grading details.",
+                                style: TextStyle(color: textColor, fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  child: _buildFormattedContent(widget.analysis),
                 ),
-
-                // Extra space for bottom button
-                const SizedBox(height: 100),
               ],
             ),
           ),
 
-          // 3. FLOATING BOTTOM BUTTON
+          // 2. BOTTOM FLOATING BUTTON (Like Image 1 & 3)
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 34),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
                     bgColor.withOpacity(0.0),
+                    bgColor.withOpacity(0.9),
                     bgColor,
                   ],
                 ),
               ),
-              child: SafeArea(
-                top: false,
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _saveToCollection,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: highlightColor,
-                      foregroundColor: bgColor,
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      'Save to My Collection',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              child: ElevatedButton.icon(
+                onPressed: _saveToCollection,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: highlightColor,
+                  foregroundColor: bgColor, // Text color
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
+                  elevation: 8,
+                  shadowColor: highlightColor.withOpacity(0.4),
+                ),
+                icon: const Icon(Icons.add_circle_outline, weight: 600),
+                label: const Text(
+                  'Add to Collection',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
