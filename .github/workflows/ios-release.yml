@@ -1,30 +1,51 @@
-name: Flutter iOS Release
+name: Flutter iOS IPA Build
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  build:
-    # 1. FIXED: Switch to macOS to allow iOS builds
+  build-ios:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: "3.19.0"
 
       - name: Install dependencies
         run: flutter pub get
 
-      # 2. FIXED: Removed 'flutter analyze' and 'flutter test' steps entirely.
-      
-      # 3. ADDED: The command to actually build the iOS app
-      - name: Build iOS Release
-        run: flutter build ios --release --no-codesign
+      - name: Decode certificates
+        run: |
+          echo "$IOS_CERT_P12" | base64 --decode > cert.p12
+          echo "$IOS_PROVISION_PROFILE" | base64 --decode > profile.mobileprovision
+        env:
+          IOS_CERT_P12: ${{ secrets.IOS_CERT_P12 }}
+          IOS_PROVISION_PROFILE: ${{ secrets.IOS_PROVISION_PROFILE }}
+
+      - name: Setup keychain
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security import cert.p12 -k build.keychain -P "$IOS_CERT_PASSWORD" -T /usr/bin/codesign
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+        env:
+          IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+
+      - name: Build IPA
+        run: flutter build ipa --release
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: coinidentifier-ipa
+          path: build/ios/ipa/*.ipa
